@@ -1,0 +1,39 @@
+import streamlit as st
+import openai
+import datetime
+
+# Configurar la API de OpenAI
+openai.api_key = "TU_API_KEY_AQUI"
+
+def generar_recordatorio(tarea):
+    prompt = f"Genera un recordatorio amigable para la siguiente tarea de salud: {tarea}"
+    response = openai.ChatCompletion.create(
+        model="gpt-4", 
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response["choices"][0]["message"]["content"].strip()
+
+# Configurar la interfaz en Streamlit
+st.title("Health AI - Asistente de Salud Personalizado")
+
+st.write("Ingrese sus tareas de salud para recibir recordatorios personalizados.")
+
+# Entrada de usuario
+tarea = st.text_input("Escriba una tarea de salud (Ej: Tomar medicación a las 9 AM)")
+
+tasks = []
+if "tasks" not in st.session_state:
+    st.session_state.tasks = []
+
+if st.button("Generar Recordatorio"):
+    if tarea:
+        recordatorio = generar_recordatorio(tarea)
+        st.session_state.tasks.append({"tarea": tarea, "recordatorio": recordatorio, "hora": datetime.datetime.now().strftime("%H:%M")})
+        st.success("Recordatorio generado con éxito!")
+    else:
+        st.warning("Por favor, ingrese una tarea válida.")
+
+# Mostrar lista de tareas generadas
+st.subheader("Recordatorios Generados")
+for task in st.session_state.tasks:
+    st.write(f"**{task['tarea']}** - {task['recordatorio']} ({task['hora']})")
