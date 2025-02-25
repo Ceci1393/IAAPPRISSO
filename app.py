@@ -121,10 +121,16 @@ descripcion = st.text_input("Describe la imagen que quieres generar (Ej: Un méd
 
 if st.button("Generar Imagen"):
     if descripcion:
-        imagen_url = generar_imagen(descripcion)
+        # Llamar a la función que genera la imagen con la descripción dada
+        response = generar_imagen(descripcion)
 
-        if imagen_url:
+        if response and "data" in response:
+            # Extraer la URL de la imagen generada
+            imagen_url = response["data"][0]["url"]
+            
+            # Mostrar la imagen en Streamlit
             st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
+
         else:
             st.error("No se pudo generar la imagen. Intenta con otra descripción.")
     else:
