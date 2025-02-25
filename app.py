@@ -95,7 +95,8 @@ for task in st.session_state.tasks:
 # Función para generar una imagen con DALL·E
 def generar_imagen(descripcion):
     try:
-        response = openai.Image.create(
+        response = openai.images.generate(
+            model="dall-e-3",  # Usa DALL-E 3 en lugar de DALL-E 2
             prompt=descripcion,
             n=1,  # Generar una única imagen
             size="1024x1024"
@@ -105,8 +106,8 @@ def generar_imagen(descripcion):
         st.write("Respuesta de OpenAI:", response)
 
         # Verificar si se generó correctamente la imagen
-        if "data" in response and len(response["data"]) > 0:
-            return response["data"][0]["url"]
+        if response.data and len(response.data) > 0:
+            return response.data[0].url
         else:
             return None
     except Exception as e:
