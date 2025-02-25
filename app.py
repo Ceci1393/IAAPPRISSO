@@ -129,8 +129,8 @@ if st.button("Generar Imagen"):
                 # Extraer la URL de la imagen generada
                 imagen_url = response["data"][0].get("url", None)
 
-                # Muestra la URL para depuración
-                st.write("URL de la imagen generada:", imagen_url)
+                # Mostrar la URL primero para verificarla
+                st.write(f"URL obtenida: {imagen_url}")
 
                 if imagen_url:
                     # Mostrar la imagen en Streamlit
