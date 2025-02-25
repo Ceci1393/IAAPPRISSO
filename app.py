@@ -3,7 +3,6 @@ import openai
 import datetime
 import requests
 
-
 # Configurar la API de OpenAI
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -74,6 +73,7 @@ def generar_recordatorio(tarea):
 
 # Entrada del usuario para recordatorios
 tarea = st.text_input("Escriba una tarea de salud (Ej: Tomar medicación a las 9 AM)")
+
 if "tasks" not in st.session_state:
     st.session_state.tasks = []
 
@@ -98,16 +98,13 @@ for task in st.session_state.tasks:
 def generar_imagen(descripcion):
     try:
         response = openai.images.generate(
-            model="dall-e-3",  # Usa DALL-E 3 en lugar de DALL-E 2
+            model="dall-e-3",  # Usa DALL-E 3
             prompt=descripcion,
             n=1,  # Generar una única imagen
             size="1024x1024"
         )
 
-        # Debugging: Mostrar la respuesta de OpenAI en la app
-        st.write("Respuesta de OpenAI:", response)
-
-        # Verificar si se generó correctamente la imagen
+        # Verificar si la respuesta es válida y contiene una URL
         if response.data and len(response.data) > 0:
             return response.data[0].url
         else:
@@ -116,44 +113,22 @@ def generar_imagen(descripcion):
         st.error(f"Error al generar la imagen: {e}")
         return None
 
-# Interfaz de usuario en Streamlit
-
+# Interfaz de usuario en Streamlit para generar imágenes
 st.subheader("Generador de Imágenes con IA (DALL·E)")
 
 descripcion = st.text_input("Describe la imagen que quieres generar (Ej: Un médico robot con un estetoscopio)")
 
 if st.button("Generar Imagen"):
     if descripcion:
-        try:
-            # Llamar a la API de OpenAI para generar la imagen
-            response = generar_imagen(descripcion)  
+        imagen_url = generar_imagen(descripcion)  
 
-            if response and "data" in response:
-                # Extraer la URL de la imagen generada
-                imagen_url = response["data"][0].get("url", None)
-                
-                if imagen_url:
-                    # Mostrar la imagen en Streamlit
-                    st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
-                else:
-                    st.error("No se pudo encontrar la URL de la imagen en la respuesta de la API.")
-
-            else:
-                st.error("No se pudo generar la imagen. Intenta con otra descripción.")
-
-        except Exception as e:
-            st.error(f"Error al generar la imagen: {e}")
+        if imagen_url:
+            # Mostrar la imagen directamente en Streamlit
+            st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
+        else:
+            st.error("No se pudo generar la imagen. Intenta con otra descripción.")
     else:
         st.warning("Por favor, ingresa una descripción antes de generar la imagen.")
-    # Hacer la solicitud a la URL
-if imagen_url:
-    response = requests.get(imagen_url)
-    if response.status_code == 200:
-        st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
-    else:
-        st.error(f"⚠️ Error al cargar la imagen. Código HTTP: {response.status_code}")
-else:
-    st.error("⚠️ No se obtuvo una URL válida para la imagen.")
 
 # Footer
 st.markdown('<div class="footer">Desarrollado con ❤️ por IA - 2024</div>', unsafe_allow_html=True)
