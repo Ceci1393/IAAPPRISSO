@@ -1,6 +1,8 @@
 import streamlit as st
 import openai
 import datetime
+import requests
+
 
 # Configurar la API de OpenAI
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -143,6 +145,15 @@ if st.button("Generar Imagen"):
             st.error(f"Error al generar la imagen: {e}")
     else:
         st.warning("Por favor, ingresa una descripción antes de generar la imagen.")
+    # Hacer la solicitud a la URL
+if imagen_url:
+    response = requests.get(imagen_url)
+    if response.status_code == 200:
+        st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
+    else:
+        st.error(f"⚠️ Error al cargar la imagen. Código HTTP: {response.status_code}")
+else:
+    st.error("⚠️ No se obtuvo una URL válida para la imagen.")
 
 # Footer
 st.markdown('<div class="footer">Desarrollado con ❤️ por IA - 2024</div>', unsafe_allow_html=True)
