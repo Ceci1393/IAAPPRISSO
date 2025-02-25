@@ -128,7 +128,10 @@ if st.button("Generar Imagen"):
             if response and "data" in response:
                 # Extraer la URL de la imagen generada
                 imagen_url = response["data"][0].get("url", None)
-                
+
+                # Muestra la URL para depuración
+                st.write("URL de la imagen generada:", imagen_url)
+
                 if imagen_url:
                     # Mostrar la imagen en Streamlit
                     st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
