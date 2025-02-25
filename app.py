@@ -112,7 +112,7 @@ if st.button("Generar Imagen"):
     if image_prompt:
         image_url = generar_imagen(image_prompt)
         if "Error" not in image_url:
-            st.image(image_url, caption="Imagen generada por DALL·E", use_column_width=True)
+            st.image(imagen, caption="Imagen generada por DALL·E",  use_container_width=True)
         else:
             st.error(image_url)
     else:
