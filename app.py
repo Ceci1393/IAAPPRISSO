@@ -127,10 +127,14 @@ if st.button("Generar Imagen"):
 
             if response and "data" in response:
                 # Extraer la URL de la imagen generada
-                imagen_url = response["data"][0]["url"]
+                imagen_url = response["data"][0].get("url", None)
                 
-                # Mostrar la imagen en Streamlit
-                st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
+                if imagen_url:
+                    # Mostrar la imagen en Streamlit
+                    st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
+                else:
+                    st.error("No se pudo encontrar la URL de la imagen en la respuesta de la API.")
+
             else:
                 st.error("No se pudo generar la imagen. Intenta con otra descripción.")
 
@@ -138,5 +142,6 @@ if st.button("Generar Imagen"):
             st.error(f"Error al generar la imagen: {e}")
     else:
         st.warning("Por favor, ingresa una descripción antes de generar la imagen.")
+
 # Footer
 st.markdown('<div class="footer">Desarrollado con ❤️ por IA - 2024</div>', unsafe_allow_html=True)
