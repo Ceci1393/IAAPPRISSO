@@ -115,6 +115,7 @@ def generar_imagen(descripcion):
         return None
 
 # Interfaz de usuario en Streamlit
+
 st.subheader("Generador de Imágenes con IA (DALL·E)")
 
 descripcion = st.text_input("Describe la imagen que quieres generar (Ej: Un médico robot con un estetoscopio)")
@@ -128,10 +129,7 @@ if st.button("Generar Imagen"):
             if response and "data" in response:
                 # Extraer la URL de la imagen generada
                 imagen_url = response["data"][0].get("url", None)
-
-                # Mostrar la URL primero para verificarla
-                st.write(f"URL obtenida: {imagen_url}")
-
+                
                 if imagen_url:
                     # Mostrar la imagen en Streamlit
                     st.image(imagen_url, caption="Imagen generada por DALL·E", use_container_width=True)
