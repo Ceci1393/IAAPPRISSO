@@ -92,31 +92,41 @@ st.subheader("Recordatorios Generados")
 for task in st.session_state.tasks:
     st.markdown(f"**{task['tarea']}** - {task['recordatorio']} ({task['hora']})")
 
-# Función para generar imágenes con DALL·E
+# Función para generar una imagen con DALL·E
 def generar_imagen(descripcion):
     try:
-        response = openai.images.generate(
-            model="dall-e-2",  # O puedes probar con "dall-e-3"
+        response = openai.Image.create(
             prompt=descripcion,
-            n=1,
-            size="512x512"
+            n=1,  # Generar una única imagen
+            size="1024x1024"
         )
-        return response.data[0].url  # 🔹 Corrección aquí: Antes estaba usando una estructura incorrecta
-    except Exception as e:
-        return f"Error al generar la imagen: {str(e)}"
 
-# Sección para generar imágenes
-st.subheader("Generador de Imágenes con IA (DALL·E)")
-image_prompt = st.text_input("Describe la imagen que quieres generar (Ej: Un médico robot con un estetoscopio)")
-if st.button("Generar Imagen"):
-    if image_prompt:
-        image_url = generar_imagen(image_prompt)
-        if "Error" not in image_url:
-            st.image(imagen, caption="Imagen generada por DALL·E",  use_container_width=True)
+        # Debugging: Mostrar la respuesta de OpenAI en la app
+        st.write("Respuesta de OpenAI:", response)
+
+        # Verificar si se generó correctamente la imagen
+        if "data" in response and len(response["data"]) > 0:
+            return response["data"][0]["url"]
         else:
-            st.error(image_url)
-    else:
-        st.warning("Ingresa una descripción válida para generar la imagen.")
+            return None
+    except Exception as e:
+        st.error(f"Error al generar la imagen: {e}")
+        return None
 
+# Interfaz de usuario en Streamlit
+st.title("Generador de Imágenes con IA (DALL·E)")
+
+descripcion = st.text_input("Describe la imagen que quieres generar (Ej: Un médico robot con un estetoscopio)")
+
+if st.button("Generar Imagen"):
+    if descripcion:
+        imagen_url = generar_imagen(descripcion)
+
+        if imagen_url:
+            st.image(imagen_url, caption="Imagen generada por DALL·E")  # Se eliminó `use_container_width`
+        else:
+            st.error("No se pudo generar la imagen. Intenta con otra descripción.")
+    else:
+        st.warning("Por favor, ingresa una descripción antes de generar la imagen.")
 # Footer
 st.markdown('<div class="footer">Desarrollado con ❤️ por IA - 2024</div>', unsafe_allow_html=True)
